@@ -1,0 +1,198 @@
+%% llvmlistings.sty - LLVM IR language definition for listings
+%% Supports both pdfLaTeX (lmtt) and LuaLaTeX/XeLaTeX (JetBrains Mono via fontspec).
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{llvmlistings}[2026/06/02 LLVM IR language definition for listings]
+
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+\RequirePackage{iftex}           % provides \ifluatex, \ifxetex
+
+% -----------------------------------------------------------------------
+%  Font setup – engine-dependent
+%
+%  LuaLaTeX / XeLaTeX  →  JetBrains Mono via fontspec (has bold, italic,
+%                          bold-italic, and a lighter ExtraLight cut).
+%                          Falls back gracefully to lmtt if the font is
+%                          not installed.
+%
+%  pdfLaTeX            →  Latin Modern Typewriter (lmtt), which ships
+%                          with TeX Live and has genuine bold / bold-italic
+%                          variants.  For the "receding" attribute class we
+%                          borrow cmss italic (different family, same idea).
+% -----------------------------------------------------------------------
+
+\ifluatex
+  \RequirePackage{fontspec}
+  %% Try to load JetBrains Mono; define a fallback flag if unavailable.
+  \newif\ifllvm@jbmono \llvm@jbmonotrue
+  \IfFontExistsTF{JetBrains Mono}{}{%
+    \llvm@jbmonofalse
+    \PackageWarning{llvmlistings}{%
+      JetBrains Mono not found; falling back to lmtt for mono style}}
+
+  \ifllvm@jbmono
+    %% Define named fontspec families for each weight/style combination.
+    %% fontspec NewFontFamily creates a LaTeX font-family command.
+    \newfontfamily\llvmFontReg{JetBrains Mono}[NFSSFamily=llvmjbm]
+    \newfontfamily\llvmFontBold{JetBrains Mono}[
+      FontFace={b}{n}{Font=JetBrains Mono,FakeBold=0pt},
+      BoldFont=JetBrains Mono ExtraBold,
+      NFSSFamily=llvmjbm]
+
+    % Convenience wrappers used in keywordstyle
+    \newcommand*{\llvmKwStructural}{\fontfamily{llvmjbm}\fontseries{b}\fontshape{n}\selectfont}
+    \newcommand*{\llvmKwFlag}      {\fontfamily{llvmjbm}\fontseries{b}\fontshape{it}\selectfont}
+    \newcommand*{\llvmKwAttr}      {\fontfamily{llvmjbm}\fontseries{l}\fontshape{it}\selectfont}
+    \newcommand*{\llvmKwPred}      {\fontfamily{llvmjbm}\fontseries{b}\fontshape{n}\selectfont}
+    \newcommand*{\llvmKwType}      {\fontfamily{llvmjbm}\fontseries{m}\fontshape{n}\selectfont}
+    \newcommand*{\llvmBasicFont}   {\fontfamily{llvmjbm}\fontseries{m}\selectfont}
+  \else
+    %% JetBrains Mono missing on this LuaLaTeX installation: use lmtt
+    \newcommand*{\llvmKwStructural}{\fontfamily{lmtt}\fontseries{b}\fontshape{n}\selectfont}
+    \newcommand*{\llvmKwFlag}      {\fontfamily{lmtt}\fontseries{b}\fontshape{it}\selectfont}
+    \newcommand*{\llvmKwAttr}      {\fontfamily{cmss}\fontseries{m}\fontshape{it}\selectfont}
+    \newcommand*{\llvmKwPred}      {\fontfamily{lmtt}\fontseries{b}\fontshape{n}\selectfont}
+    \newcommand*{\llvmKwType}      {\fontfamily{lmtt}\fontseries{m}\fontshape{n}\selectfont}
+    \newcommand*{\llvmBasicFont}   {\fontfamily{lmtt}\fontseries{m}\selectfont}
+  \fi
+
+\else
+  %% pdfLaTeX path: lmtt (bold + bold-italic available), cmss for attrs.
+  \newcommand*{\llvmKwStructural}{\fontfamily{lmtt}\fontseries{b}\fontshape{n}\selectfont}
+  \newcommand*{\llvmKwFlag}      {\fontfamily{lmtt}\fontseries{b}\fontshape{it}\selectfont}
+  \newcommand*{\llvmKwAttr}      {\fontfamily{cmss}\fontseries{m}\fontshape{it}\selectfont}
+  \newcommand*{\llvmKwPred}      {\fontfamily{lmtt}\fontseries{b}\fontshape{n}\selectfont}
+  \newcommand*{\llvmKwType}      {\fontfamily{lmtt}\fontseries{m}\fontshape{n}\selectfont}
+  \newcommand*{\llvmBasicFont}   {\fontfamily{lmtt}\fontseries{m}\selectfont}
+\fi
+
+% -----------------------------------------------------------------------
+%  Language definition
+% -----------------------------------------------------------------------
+\lstdefinelanguage{llvm}{
+  % Class 1 – structural / opcode keywords
+  morekeywords=[1]{
+    define, declare, global, constant, null, undef, poison,
+    add, sub, mul, sdiv, udiv, srem, urem,
+    fadd, fsub, fmul, fdiv, frem,
+    and, or, xor, shl, lshr, ashr,
+    alloca, store, load, getelementptr, inbounds,
+    icmp, fcmp, phi, select, br, ret, call, invoke,
+    unwind, resume, landingpad, cleanup, catch, filter,
+    switch, indirectbr, callbr,
+    trunc, zext, sext, fpext, fptrunc, bitcast,
+    ptrtoint, inttoptr, addrspacecast,
+    extractelement, insertelement, shufflevector,
+    extractvalue, insertvalue,
+    atomicrmw, cmpxchg, fence,
+    freeze, fneg,
+    void, label, ptr,
+    type, opaque, target, datalayout, triple,
+    source_filename, module, asm, attributes, uselistorder,
+    personality
+  },
+  % Class 2 – overflow / fast-math flags
+  morekeywords=[2]{
+    nsw, nuw, exact,
+    nnan, ninf, nsz, arcp, contract, afn, reassoc, fast
+  },
+  % Class 3 – function/parameter/linkage attributes
+  morekeywords=[3]{
+    align, volatile, atomic, syncscope,
+    seq_cst, acquire, release, acq_rel, monotonic, unordered,
+    xchg, max, min, umax, umin, fmax, fmin,
+    private, internal, available_externally, linkonce, weak,
+    common, appending, extern_weak, linkonce_odr, weak_odr, external,
+    default, hidden, protected,
+    dso_local, dso_preemptable,
+    unnamed_addr, local_unnamed_addr, addrspace,
+    noinline, alwaysinline, inlinehint, optsize, optnone,
+    noreturn, nounwind, willreturn, nosync, norecurse,
+    readnone, readonly, writeonly, argmemonly,
+    inaccessiblememonly, inaccessiblemem_or_argmemonly,
+    speculatable, strictfp, mustprogress,
+    ssp, sspstrong, sspreq,
+    sanitize_address, sanitize_hwaddress, sanitize_memtag,
+    sanitize_thread, sanitize_memory,
+    uwtable, nocf_check, shadowcallstack,
+    convergent, noduplicate, cold, hot,
+    nofree, nossp,
+    byval, byref, inalloca, sret, elementtype,
+    noalias, nocapture, nonnull, dereferenceable,
+    dereferenceable_or_null, swiftself, swifterror,
+    swiftasync, preallocated, zeroext, signext, inreg,
+    returned, nest, immarg
+  },
+  % Class 4 – icmp / fcmp predicates
+  morekeywords=[4]{
+    eq, ne, slt, sgt, sle, sge, ult, ugt, ule, uge,
+    oeq, ogt, oge, olt, ole, one, ord,
+    ueq, une, uno, true, false
+  },
+  % Class 5 – primitive types
+  morekeywords=[5]{
+    i1, i8, i16, i32, i64, i128,
+    half, bfloat, float, double,
+    x86_fp80, fp128, ppc_fp128,
+    x86_mmx, x86_amx,
+    token, metadata
+  },
+  sensitive=true,
+  morecomment=[l]{;},
+  morestring=[b]"
+}
+
+% -----------------------------------------------------------------------
+%  Colour style  (LuaLaTeX and pdfLaTeX)
+% -----------------------------------------------------------------------
+\lstdefinestyle{llvmdefaults}{
+  language=llvm,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=[1]{\bfseries\color{blue!70!black}},
+  keywordstyle=[2]{\bfseries\color{orange!80!black}},
+  keywordstyle=[3]{\color{teal}},
+  keywordstyle=[4]{\itshape\color{purple!70!black}},
+  keywordstyle=[5]{\color{green!50!black}},
+  commentstyle=\itshape\color{gray!70},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  breaklines=true,
+  columns=fullflexible,
+  tabsize=2,
+  frame=single,
+  xleftmargin=4pt,
+  xrightmargin=4pt
+}
+
+% -----------------------------------------------------------------------
+%  Monochrome style
+%
+%  Typographic hierarchy (no colour):
+%
+%   Class 1  structural kw     bold upright tt          ← heaviest
+%   Class 2  arith/flags       bold italic tt
+%   Class 4  predicates        bold upright tt
+%   Class 5  primitive types   regular tt               ← recedes
+%   Class 3  attributes        italic (sans or light)   ← different feel
+%   comments                   italic sans/tt
+% -----------------------------------------------------------------------
+\lstdefinestyle{llvmmono}{
+  language=llvm,
+  basicstyle=\llvmBasicFont\scriptsize,
+  keywordstyle=[1]{\llvmKwStructural},
+  keywordstyle=[2]{\llvmKwFlag},
+  keywordstyle=[3]{\llvmKwAttr},
+  keywordstyle=[4]{\llvmKwPred},
+  keywordstyle=[5]{\llvmKwType},
+  commentstyle=\llvmKwAttr,
+  stringstyle=\llvmKwStructural,
+  showstringspaces=false,
+  breaklines=true,
+  columns=fullflexible,
+  tabsize=2,
+  frame=single,
+  xleftmargin=4pt,
+  xrightmargin=4pt
+}
+
+\endinput

@@ -1,0 +1,188 @@
+%!TEX program = lualatex
+%% NOTE: requires compilation with XeLaTeX or LuaLaTeX
+\documentclass[10pt,xcolor={table,dvipsnames},t]{beamer}
+
+%%══════════════════════════════════════════════════════════════
+%% PRESENTATION SETTINGS
+%%══════════════════════════════════════════════════════════════
+% Automatically set flags for the pdpfpc program
+\usepackage[overridenote]{pdfpc} % Compile with annotations
+%\usepackage[overridenote,hidenotes]{pdfpc} % Compile without annotations
+\pdfpcsetup{
+    duration=30,
+    lastminutes=2,
+}
+
+% ============================================================
+% LANGUAGE
+% ============================================================
+% Italian
+%\usepackage[italian]{babel}
+%\usepackage[autostyle, italian=guillemets]{csquotes}
+% English (UK)
+\usepackage[british]{babel}
+\usepackage[autostyle]{csquotes}
+
+%%══════════════════════════════════════════════════════════════
+%% THEME & COLORS
+%%══════════════════════════════════════════════════════════════
+\usetheme{Unipi}  % Template Beamers
+
+%%══════════════════════════════════════════════════════════════
+%% GRAPHICS & IMAGES
+%%══════════════════════════════════════════════════════════════
+\usepackage{tikz}
+\usetikzlibrary{
+    positioning,
+    arrows.meta,
+    shapes.geometric,
+    fit
+}
+\usepackage{svg}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=1.18}
+
+%%══════════════════════════════════════════════════════════════
+%% MATHEMATICS
+%%══════════════════════════════════════════════════════════════
+\usepackage{amsmath}  % math equations
+\usepackage{amssymb}  % additional symbols
+\usepackage{proof}    % inference rules
+\usepackage{bussproofs}
+\usepackage{stmaryrd} % semantics brackets
+
+%%══════════════════════════════════════════════════════════════
+%% CODE LISTINGS
+%%══════════════════════════════════════════════════════════════
+\usepackage{listings}      % code listings
+\lstset{
+  columns=fullflexible,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)} % useful for adding commands inside listing
+} 
+\usepackage{lstautogobble} % disable auto indentation
+\usepackage{fontspec}
+% JetBrains as default monospace font
+\setmonofont{JetBrains Mono}[Scale=MatchLowercase]
+
+%%══════════════════════════════════════════════════════════════
+%% TYPOGRAPHY & FORMATTING
+%%══════════════════════════════════════════════════════════════
+\usepackage[onehalfspacing]{setspace}  % line-spacing 1.5
+\usepackage{booktabs}                  % better tables
+\usepackage{xcolor}                    % color management
+
+%%══════════════════════════════════════════════════════════════
+%% BIBLIOGRAPHY
+%%══════════════════════════════════════════════════════════════
+%\usepackage[
+%    backend=biber,
+%    bibstyle=ieee,        % IEEE style
+%    citestyle=numeric,
+%    giveninits=true,
+%    url=false
+%]{biblatex}
+%\addbibresource{bibliography.bib}
+%\renewcommand*{\newunitpunct}{\addcomma\space}
+%\renewcommand*{\revsdnamepunct}{}
+%\renewcommand\mkbibnamefamily[1]{\textsc{#1}}
+
+%%══════════════════════════════════════════════════════════════
+%% TITLE INFORMATION
+%%══════════════════════════════════════════════════════════════
+\title[Template-Beamers]{\textbf{Template Beamers}}
+\subtitle{Subtitle}
+\author{The Spanish Inquisition}
+%\date{} % ovverride date
+
+%%══════════════════════════════════════════════════════════════
+%% FOOTER CONFIGURATION
+%%══════════════════════════════════════════════════════════════
+\setbeamertemplate{footline}{
+  \ifnum\insertframenumber>0
+    \begin{beamercolorbox}[wd=\paperwidth, ht=0.08\paperheight,
+                           center, dp=0pt]{footline}
+      \centering
+      \raisebox{0.025\paperheight}{%
+        \scriptsize\color{white}%
+        \insertframenumber\,/\,\inserttotalframenumber%
+      }
+    \end{beamercolorbox}%
+  \fi
+}
+
+%%══════════════════════════════════════════════════════════════
+%% CUSTOM COMMANDS
+%%══════════════════════════════════════════════════════════════
+
+% add here additional user defined commands
+
+%%══════════════════════════════════════════════════════════════
+%% DOCUMENT BEGIN
+%%══════════════════════════════════════════════════════════════
+\begin{document}
+
+%%══════════════════════════════════════════════════════════════
+%% TITLE SLIDE
+%%══════════════════════════════════════════════════════════════
+\begin{frame}[noframenumbering]
+  \titlepage
+\end{frame}
+
+%%══════════════════════════════════════════════════════════════
+%% SLIDE 1
+%%══════════════════════════════════════════════════════════════
+\input{beamers/01.tex} % always use input
+
+%%══════════════════════════════════════════════════════════════
+%% SLIDE 2
+%%══════════════════════════════════════════════════════════════
+\input{beamers/02.tex} % always use input
+
+%%══════════════════════════════════════════════════════════════
+%% SLIDE 3
+%%══════════════════════════════════════════════════════════════
+\input{beamers/03.tex} % always use input
+
+%%══════════════════════════════════════════════════════════════
+%% SLIDE 4
+%%══════════════════════════════════════════════════════════════
+\input{beamers/04.tex} % always use input
+
+%%══════════════════════════════════════════════════════════════
+%% THANKS FOR YOUR ATTENTION
+%%══════════════════════════════════════════════════════════════
+\begin{frame}[plain, noframenumbering, label=thankyou]
+  \begin{tikzpicture}[overlay, remember picture]
+    \fill[UnipiBlue]
+      ([yshift=-0.42\paperheight] current page.north east) --
+      (current page.south east) --
+      ([yshift=0.08\paperheight] current page.south west) --
+      cycle;
+    \node[anchor=south east, inner sep=0pt, draw=none,
+          xshift=-0.018\paperheight, yshift=0.02\paperheight]
+      at (current page.south east)
+      {\pgfuseimage{logo}};
+  \end{tikzpicture}
+ 
+
+  %--- Main title ---%
+  \vfill
+  \begin{center}
+    {\rmfamily\mdseries\fontsize{36}{42}\selectfont\color{BerkeleyBlueText}
+      Thanks for your attention}
+ 
+    \vspace{0.05cm}
+    {\color{UnipiBlue!50}\rule{0.5\textwidth}{0.5pt}}
+    \vspace{0.6cm}
+ 
+    %{\large\color{BerkeleyBlueText} Subtext}
+  \end{center}
+  \vfill
+ 
+\end{frame}
+
+
+\end{document}
