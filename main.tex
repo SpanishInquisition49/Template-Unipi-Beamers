@@ -27,6 +27,7 @@
 %% THEME & COLORS
 %%══════════════════════════════════════════════════════════════
 \usetheme{Unipi}  % Template Beamers
+\unipidark
 
 %%══════════════════════════════════════════════════════════════
 %% GRAPHICS & IMAGES
@@ -64,8 +65,6 @@
 } 
 \usepackage{lstautogobble} % disable auto indentation
 \usepackage{fontspec}
-% JetBrains as default monospace font
-\setmonofont{JetBrains Mono}[Scale=MatchLowercase]
 
 %%══════════════════════════════════════════════════════════════
 %% TYPOGRAPHY & FORMATTING
@@ -154,35 +153,6 @@
 %%══════════════════════════════════════════════════════════════
 %% THANKS FOR YOUR ATTENTION
 %%══════════════════════════════════════════════════════════════
-\begin{frame}[plain, noframenumbering, label=thankyou]
-  \begin{tikzpicture}[overlay, remember picture]
-    \fill[UnipiBlue]
-      ([yshift=-0.42\paperheight] current page.north east) --
-      (current page.south east) --
-      ([yshift=0.08\paperheight] current page.south west) --
-      cycle;
-    \node[anchor=south east, inner sep=0pt, draw=none,
-          xshift=-0.018\paperheight, yshift=0.02\paperheight]
-      at (current page.south east)
-      {\pgfuseimage{logo}};
-  \end{tikzpicture}
- 
-
-  %--- Main title ---%
-  \vfill
-  \begin{center}
-    {\rmfamily\mdseries\fontsize{36}{42}\selectfont\color{BerkeleyBlueText}
-      Thanks for your attention}
- 
-    \vspace{0.05cm}
-    {\color{UnipiBlue!50}\rule{0.5\textwidth}{0.5pt}}
-    \vspace{0.6cm}
- 
-    %{\large\color{BerkeleyBlueText} Subtext}
-  \end{center}
-  \vfill
- 
-\end{frame}
-
+\unipithankyouframe[subtext]{Thanks for your attention}
 
 \end{document}

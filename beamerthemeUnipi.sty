@@ -26,7 +26,8 @@
 % ============================================================
 \RequirePackage{fontspec}
 \setmainfont{EB Garamond} % Titles
-\setsansfont{Fira Sans}[Scale=MatchLowercase] % body
+\setsansfont{Fira Sans}[Scale=MatchLowercase] % Body
+\setmonofont{JetBrains Mono}[Scale=MatchLowercase]
 
 % ============================================================
 % IMAGES
@@ -51,19 +52,44 @@
 % COLORS
 % ============================================================
 
-% Official Unipi color
-\definecolor{UnipiBlue}{RGB}{0, 80, 139}
+% BASE PALETTE
+\definecolor{UnipiDark}{HTML}{003A66}    % titles,bold text
+\definecolor{UnipiBlue}{HTML}{00508B}    % footer, official Unipi color
+\definecolor{UnipiLight}{HTML}{1A6FA0}   % frame body
 
-% Colors from the UC Berkeley (original)
-\definecolor{BerkeleyBlue}{HTML}{003262}
-\definecolor{BerkeleyBlueText}{RGB}{48, 99, 126}
-\definecolor{BerkeleyGold}{RGB}{193, 129, 45}
-\definecolor{Medalist}{HTML}{C4820E}
-\definecolor{FoundersRock}{HTML}{3B7EA1}
-\definecolor{CaliforniaGold}{HTML}{FDB515}
-\definecolor{BerkeleyTableGold}{RGB}{222, 157, 46}
-\definecolor{BerkeleyTableBlue1}{RGB}{207, 226, 234}
-\definecolor{BerkeleyTableBlue2}{RGB}{232, 241, 245}
+% TEXT ACCENTS
+\definecolor{UnipiRed}{HTML}{8B1A00}     % error / negative / critical   (9.3:1)
+\definecolor{UnipiGreen}{HTML}{1F6B41}   % succeess / positive / ok      (6.5:1)
+\definecolor{UnipiOrange}{HTML}{B35900}  % warning / attention          (6.0:1)
+\definecolor{UnipiTeal}{HTML}{006B6B}    % info / alternative to blue (6.8:1)
+\definecolor{UnipiPurple}{HTML}{5B3A8B}  % info / special category (7.8:1)
+
+% BACGROUND ACCENTS
+\definecolor{UnipiRedBg}{HTML}{F7E6E1}
+\definecolor{UnipiGreenBg}{HTML}{E1F0E8}
+\definecolor{UnipiOrangeBg}{HTML}{FBEDDD}
+\definecolor{UnipiPurpleBg}{HTML}{ECE5F7}
+\definecolor{UnipiTealBg}{HTML}{DFF0F0}
+\definecolor{UnipiBlueBg}{HTML}{DCE9F2}
+
+% GREY
+\definecolor{UnipiGrayDark}{HTML}{2B2F33}   % Alternative to Black
+\definecolor{UnipiGray}{HTML}{5C6770}       % Secondary text
+\definecolor{UnipiGrayMid}{HTML}{9AA5AC}    % lines, separator
+\definecolor{UnipiGrayLight}{HTML}{E8EDF1}  % alternate tables neutral
+\definecolor{UnipiGrayLighter}{HTML}{F4F6F8} % alternative page background
+
+% FRAMES BACKGROUND
+\definecolor{UnipiWhite}{HTML}{FFFFFF}      % standard white
+\definecolor{UnipiOffWhite}{HTML}{FAFBFC}   % warm white
+\definecolor{UnipiSlateBg}{HTML}{F4F7FA}    % light blue
+\definecolor{UnipiDarkBg}{HTML}{0D2B45}     % dark background
+\definecolor{UnipiDarkBgAlt}{HTML}{102338}  % neutral dark alternative
+
+% TEXT FOR DARK BACKGROUND
+\definecolor{UnipiTextOnDark}{HTML}{F4F7FA}     % primary
+\definecolor{UnipiTextOnDarkDim}{HTML}{A9C1D6}  % secondary
+\definecolor{UnipiAccentOnDark}{HTML}{5FA8D3}   % accents
 
 % ============================================================
 % LAYOUT
@@ -75,15 +101,42 @@
 % ============================================================
 % BEAMER COLORS
 % ============================================================
-\setbeamercolor{titlelike}{fg=UnipiBlue}
-\setbeamercolor{author}{fg=BerkeleyBlue}
-\setbeamercolor{institute}{fg=BerkeleyBlue}
-\setbeamercolor{date}{fg=UnipiBlue}
-\setbeamercolor{normal text}{fg=BerkeleyBlueText}
-\setbeamercolor{structure}{fg=UnipiBlue}
-\setbeamercolor{block title}{fg=BerkeleyBlue}
-\setbeamercolor{section in toc}{fg=BerkeleyBlue}
-\setbeamercolor{subsection in toc}{fg=UnipiBlue}
+
+% Aliases
+\colorlet{UnipiBgColor}{UnipiWhite}         % Background
+\colorlet{UnipiTextColor}{UnipiLight}       % body text
+\colorlet{UnipiTitleColor}{UnipiDark}       % titles
+\colorlet{UnipiAccentColor}{UnipiBlue}      % accents
+\colorlet{UnipiFooterColor}{UnipiBlue}      % lower footer color
+\colorlet{UnipiTextOnAccent}{UnipiWhite}    % text on footer
+
+\newcommand{\unipilight}{%
+  \colorlet{UnipiBgColor}{UnipiWhite}
+  \colorlet{UnipiTextColor}{UnipiLight}
+  \colorlet{UnipiTitleColor}{UnipiDark}
+  \colorlet{UnipiAccentColor}{UnipiBlue}
+  \colorlet{UnipiFooterColor}{UnipiBlue}
+  \colorlet{UnipiTextOnAccent}{UnipiWhite}
+}
+\newcommand{\unipidark}{%
+  \colorlet{UnipiBgColor}{UnipiDarkBg}
+  \colorlet{UnipiTextColor}{UnipiTextOnDark}
+  \colorlet{UnipiTitleColor}{UnipiAccentOnDark}
+  \colorlet{UnipiAccentColor}{UnipiAccentOnDark}
+  \colorlet{UnipiFooterColor}{UnipiDarkBgAlt}
+  \colorlet{UnipiTextOnAccent}{UnipiTextOnDark}
+}
+
+\setbeamercolor{titlelike}{fg=UnipiAccentColor}
+\setbeamercolor{author}{fg=UnipiTitleColor}
+\setbeamercolor{institute}{fg=UnipiTitleColor}
+\setbeamercolor{date}{fg=UnipiAccentColor}
+\setbeamercolor{normal text}{fg=UnipiTextColor, bg=UnipiBgColor}
+\setbeamercolor{background canvas}{bg=UnipiBgColor}
+\setbeamercolor{structure}{fg=UnipiAccentColor}
+\setbeamercolor{block title}{fg=UnipiTitleColor}
+\setbeamercolor{section in toc}{fg=UnipiTitleColor}
+\setbeamercolor{subsection in toc}{fg=UnipiAccentColor}
 
 % ============================================================
 % BEAMER FONTS
@@ -160,7 +213,7 @@
 
 \setbeamertemplate{background}{%
   \begin{tikzpicture}[overlay, remember picture]
-    \fill[UnipiBlue]
+    \fill[UnipiFooterColor]
       (current page.south west)
       -- +(0, 0.08\paperheight)
       -- +(\paperwidth, 0.18\paperheight)
@@ -174,9 +227,38 @@
 }
 
 % ============================================================
-% TABLES
+% THANK YOU FRAME
 % ============================================================
-\renewcommand{\arraystretch}{1.2}
-\newcommand{\tableheadrow}{\rowcolor{SNSGold}}
-\newcommand{\tableheadcol}[1]{{\bfseries\color{BerkeleyBlue}#1}}
-\AtBeginEnvironment{tabular}{\color{black}}
+\newcommand{\unipithankyoutext}{Thanks for your attention}
+\newcommand{\unipithankyousubtext}{}
+
+\newcommand{\unipithankyouframe}[2][]{%
+  \begin{frame}[plain, noframenumbering, label=thankyou]
+    \begin{tikzpicture}[overlay, remember picture]
+      \fill[UnipiFooterColor]
+        ([yshift=-0.42\paperheight] current page.north east) --
+        (current page.south east) --
+        ([yshift=0.08\paperheight] current page.south west) --
+        cycle;
+      \node[anchor=south east, inner sep=0pt, draw=none,
+            xshift=-0.018\paperheight, yshift=0.02\paperheight]
+        at (current page.south east)
+        {\pgfuseimage{logo}};
+    \end{tikzpicture}
+
+    \vfill
+    \begin{center}
+      {\rmfamily\mdseries\fontsize{36}{42}\selectfont\color{UnipiTitleColor}%
+        \ifstrempty{#2}{\unipithankyoutext}{#2}}
+
+      \vspace{0.05cm}
+      {\color{UnipiAccentColor!50}\rule{0.5\textwidth}{0.5pt}}
+      \vspace{0.6cm}
+
+      \ifstrempty{#1}{}{%
+        {\large\color{UnipiTextColor}#1}%
+      }
+    \end{center}
+    \vfill
+  \end{frame}
+}
